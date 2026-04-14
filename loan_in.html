@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Disbursement Performance Audit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --cheery: #D6086B;
+            --aqua: #A3F8FF;
+            --lime: #E8FF34;
+            --mauve: #FABAFF;
+            --white: #F7FAF9;
+            --black: #212726;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .whisper-shadow {
+            box-shadow: 0px 10px 40px rgba(33, 39, 38, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 32px;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .accent-pink { border-left: 6px solid var(--cheery); }
+        .accent-aqua { border-left: 6px solid var(--aqua); }
+        .accent-lime { border-left: 6px solid var(--lime); }
+
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .col-span-8, .col-span-4, .col-span-3, .col-span-6 { grid-column: span 12 / span 12; }
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12 lg:p-16 min-h-screen">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-start md:items-end">
+        <div class="space-y-2">
+            <span class="text-xs uppercase tracking-[0.3em] font-bold text-gray-400">Summary Report</span>
+            <h1 class="text-4xl md:text-6xl text-[var(--black)]">
+                Delayed OVA Funding <span class="text-[var(--cheery)]">Nsano.</span>
+            </h1>
+            <p class="text-gray-500 font-medium max-w-lg pt-2">
+                Detailed look at loans stuck in approved state due to insufficient funds on Nsano OVA
+            </p>
+        </div>
+        <div class="mt-8 md:mt-0">
+            <div class="px-8 py-4 bg-[var(--black)] text-white rounded-3xl whisper-shadow flex items-center space-x-4">
+                <div class="flex -space-x-2">
+                    <div class="w-8 h-8 rounded-full border-2 border-[var(--black)] bg-[var(--aqua)]"></div>
+                    <div class="w-8 h-8 rounded-full border-2 border-[var(--black)] bg-[var(--mauve)]"></div>
+                </div>
+                <span class="text-sm font-bold tracking-tight">NSANO</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- KPI Section -->
+    <section class="max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div class="glass-card p-8 whisper-shadow accent-pink">
+            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Total Customers Affected</p>
+            <div class="stat-value text-4xl">339</div>
+            <p class="text-xs font-bold text-gray-400 mt-4">All loans stuck in approved state</p>
+        </div>
+
+        <div class="glass-card p-8 whisper-shadow accent-aqua">
+            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Total Value</p>
+            <div class="stat-value text-4xl text-[var(--black)]">GHS 552,450</div>
+            <p class="text-xs font-bold text-gray-400 mt-4">Average: GHS 1,629.65 / loan</p>
+        </div>
+
+        <div class="glass-card p-8 whisper-shadow accent-lime">
+            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Est. Recovery Time</p>
+            <div class="stat-value text-4xl">12 Hrs</div>
+            <p class="text-xs font-bold text-gray-400 mt-4">Request to Funding</p>
+        </div>
+
+        <div class="glass-card p-8 whisper-shadow bg-[var(--aqua)] text-[var(--black)]">
+            <p class="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-2">Issue Status</p>
+            <div class="stat-value text-4xl">RESOLVED</div>
+            <p class="text-xs font-bold text-gray-400 mt-4">Resolution Complete</p>
+        </div>
+
+    </section>
+
+    <!-- Main Analytics Bento -->
+    <main class="max-w-7xl mx-auto bento-grid pb-20">
+        
+        <!-- Chart Area -->
+        <div class="col-span-12 lg:col-span-8 glass-card p-10 whisper-shadow">
+            <div class="flex justify-between items-center mb-10">
+                <h3 class="text-xl tracking-tight">Stuck Volume by Network</h3>
+                <span class="px-4 py-1.5 bg-[var(--white)] rounded-full text-[10px] font-bold border border-gray-100">MTN DOMINATED</span>
+            </div>
+            <div class="h-[350px]">
+                <canvas id="stuckChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Insight Panel -->
+        <div class="col-span-12 lg:col-span-4 glass-card p-10 whisper-shadow bg-[var(--black)] text-white">
+            <h3 class="text-xl mb-8">Insights</h3>
+            <div class="space-y-8">
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-3">Primary Bottleneck</p>
+                    <p class="text-lg leading-relaxed font-light">
+                        <span class="text-[var(--lime)] font-bold">MTN Network</span> dominates with a <span class="text-[var(--aqua)] font-bold">98.23%</span> of the stuck transactions.
+                    </p>
+                </div>
+                
+                <div class="pt-6 border-t border-white/10">
+                    <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-3">Value Concentration</p>
+                    <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                        The majority of <span class="text-white font-bold">231</span> stuck loans is concentrated in loan amounts between GHS 60 - GHS 1,059.
+                    </p>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-[var(--cheery)] h-full" style="width: 68.14%"></div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <a href="https://docs.google.com/spreadsheets/d/1WGkfpua3qX4T6rxiVjDgG7y9giTAKqB1T1v3YRLFl0Q/edit?gid=0#gid=0" target="_blank" class="block w-full py-4 bg-[var(--cheery)] hover:bg-[#b00658] text-white rounded-2xl font-bold transition-all text-sm tracking-wide text-center">
+                        VIEW ACCOUNT LIST
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incident Resolution Timeline -->
+        <div class="col-span-12 glass-card p-12 whisper-shadow bg-white/50">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+                <div>
+                    <h3 class="text-2xl mb-2 tracking-tight">Resolution Lifecycle</h3>
+                    <p class="text-sm text-gray-500">Chronological flow of OVA funding restoration</p>
+                </div>
+                <div class="mt-4 md:mt-0 px-4 py-2 bg-[var(--aqua)] text-[var(--black)] rounded-full text-xs font-bold uppercase tracking-widest">
+                    ISSUE RESOLVED
+                </div>
+            </div>
+            
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gray-200 hidden md:block"></div>
+                
+                <div class="space-y-12 relative">
+                    <!-- Event 1 -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center">
+                        <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                            <p class="text-[var(--black)] font-bold text-lg">Initial Funding Request</p>
+                            <p class="text-sm text-gray-500">OVA replenishment request sent to Aggregator team.</p>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-[var(--mauve)] border-4 border-white whisper-shadow my-2 md:my-0"></div>
+                        <div class="md:w-1/2 md:pl-12">
+                            <p class="text-xs font-bold tracking-widest text-[var(--cheery)] uppercase">Yesterday, 9:00 PM</p>
+                        </div>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="flex flex-col md:flex-row-reverse items-start md:items-center">
+                        <div class="md:w-1/2 md:pl-12 text-left">
+                            <p class="text-[var(--black)] font-bold text-lg">First Acknowledgment</p>
+                            <p class="text-sm text-gray-500">Aggregator acknowledged receipt of funding request.</p>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-gray-200 border-4 border-white whisper-shadow my-2 md:my-0"></div>
+                        <div class="md:w-1/2 md:pr-12 md:text-right">
+                            <p class="text-xs font-bold tracking-widest text-gray-400 uppercase">Yesterday, 9:30 PM</p>
+                        </div>
+                    </div>
+
+                    <!-- Event 3 -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center">
+                        <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                            <p class="text-[var(--black)] font-bold text-lg">Internal Follow-up</p>
+                            <p class="text-sm text-gray-500">Escalation initiated due to continued disbursement latency.</p>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-[var(--cheery)] border-4 border-white whisper-shadow my-2 md:my-0"></div>
+                        <div class="md:w-1/2 md:pl-12">
+                            <p class="text-xs font-bold tracking-widest text-[var(--cheery)] uppercase">Today, 7:50 AM</p>
+                        </div>
+                    </div>
+
+                    <!-- Event 4 -->
+                    <div class="flex flex-col md:flex-row-reverse items-start md:items-center">
+                        <div class="md:w-1/2 md:pl-12 text-left">
+                            <p class="text-[var(--black)] font-bold text-lg">Second Acknowledgment</p>
+                            <p class="text-sm text-gray-500">Immediate response from Aggregator team confirming active resolution.</p>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-gray-200 border-4 border-white whisper-shadow my-2 md:my-0"></div>
+                        <div class="md:w-1/2 md:pr-12 md:text-right">
+                            <p class="text-xs font-bold tracking-widest text-gray-400 uppercase">Today, 7:55 AM</p>
+                        </div>
+                    </div>
+
+                    <!-- Event 5 -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center">
+                        <div class="md:w-1/2 md:pr-12 text-left md:text-right">
+                            <p class="text-[var(--black)] font-bold text-lg">Issue Resolved</p>
+                            <p class="text-sm text-gray-500">OVA successfully funded; disbursement pipeline cleared.</p>
+                        </div>
+                        <div class="z-10 w-8 h-8 rounded-full bg-[var(--aqua)] border-4 border-white whisper-shadow my-2 md:my-0"></div>
+                        <div class="md:w-1/2 md:pl-12">
+                            <p class="text-xs font-bold tracking-widest text-[var(--black)] uppercase">Today, 9:00 AM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="col-span-12 glass-card p-12 whisper-shadow mt-4">
+            <div class="max-w-3xl">
+                <h3 class="text-2xl mb-10">Actions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-[var(--lime)] rounded-2xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[var(--black)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.65a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"></path></svg>
+                    </div>
+                        <h4 class="text-xl">Nsano Investigation</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">
+                            Nsano to provide a detail report into the incident covering what ocassioned the delay in funding the Disbursement OVA.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        window.onload = function() {
+            const ctx = document.getElementById('stuckChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['MTN', 'VODAFONE', 'AIRTELTIGO'],
+                    datasets: [{
+                        label: 'Stuck Loans',
+                        data: [333, 5, 1],
+                        backgroundColor: [
+                            '#D6086B',
+                            '#A3F8FF',
+                            '#FABAFF'
+                        ],
+                        borderRadius: 12,
+                        borderSkipped: false,
+                        barThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { display: false },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { family: 'DM Sans', size: 12 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#212726',
+                                font: { family: 'Poppins', size: 12, weight: '600' }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
